@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librava API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #05668d 0%, #028090 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #05668d;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #028090;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #02c39a;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            border: 2px solid #00a896;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        button {
+            background: #02c39a;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #028090;
+        }
+
+        .response {
+            background: #f0f3bd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .response.show {
+            display: block;
+        }
+
+        .response.error {
+            background: #ffcccc;
+        }
+
+        .response.success {
+            background: #ccffcc;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #05668d;
+        }
+
+        .token-display {
+            background: #e8f4f8;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+
+        .info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #028090;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Librava API Tester</h1>
+        <p style="color: #666; margin-bottom: 20px;">Developer: Mohammad Taha Abdinasab</p>
+
+        <div class="info">
+            <strong>Default Credentials:</strong><br>
+            Username: admin<br>
+            Password: admin123
+        </div>
+
+        <!-- Login Test -->
+        <div class="test-section">
+            <h2>1. Login</h2>
+            <label>Username:</label>
+            <input type="text" id="login-username" value="admin">
+            <label>Password:</label>
+            <input type="password" id="login-password" value="admin123">
+            <button onclick="testLogin()">Login</button>
+            <div id="login-response" class="response"></div>
+            <div id="token-display" class="token-display" style="display: none;">
+                <strong>Token saved:</strong> <span id="token-value"></span>
+            </div>
+        </div>
+
+        <!-- Get Books Test -->
+        <div class="test-section">
+            <h2>2. Get All Books</h2>
+            <button onclick="testGetBooks()">Get Books</button>
+            <div id="books-response" class="response"></div>
+        </div>
+
+        <!-- Get Single Book Test -->
+        <div class="test-section">
+            <h2>3. Get Single Book</h2>
+            <label>Book ID:</label>
+            <input type="number" id="get-book-id" value="1">
+            <button onclick="testGetBook()">Get Book</button>
+            <div id="get-book-response" class="response"></div>
+        </div>
+
+        <!-- Create Book Test -->
+        <div class="test-section">
+            <h2>4. Create Book (Requires Token)</h2>
+            <label>Title:</label>
+            <input type="text" id="create-title" value="Test Book">
+            <label>Author:</label>
+            <input type="text" id="create-author" value="Test Author">
+            <label>Description:</label>
+            <textarea id="create-description" rows="3">This is a test book created via API.</textarea>
+            <label>Category:</label>
+            <input type="text" id="create-category" value="Test">
+            <label>Cover Image:</label>
+            <input type="file" id="create-cover" accept="image/*">
+            <label>PDF File:</label>
+            <input type="file" id="create-pdf" accept="application/pdf">
+            <button onclick="testCreateBook()">Create Book</button>
+            <div id="create-response" class="response"></div>
+        </div>
+
+        <!-- Update Book Test -->
+        <div class="test-section">
+            <h2>5. Update Book (Requires Token)</h2>
+            <label>Book ID:</label>
+            <input type="number" id="update-book-id" value="1">
+            <label>New Title:</label>
+            <input type="text" id="update-title" value="Updated Book Title">
+            <label>New Author:</label>
+            <input type="text" id="update-author" value="Updated Author">
+            <label>New Description:</label>
+            <textarea id="update-description" rows="3">This book has been updated.</textarea>
+            <label>New Category:</label>
+            <input type="text" id="update-category" value="Updated">
+            <button onclick="testUpdateBook()">Update Book</button>
+            <div id="update-response" class="response"></div>
+        </div>
+
+        <!-- Delete Book Test -->
+        <div class="test-section">
+            <h2>6. Delete Book (Requires Token)</h2>
+            <label>Book ID to Delete:</label>
+            <input type="number" id="delete-book-id" value="">
+            <p style="color: #d00; margin: 10px 0;"><strong>⚠️ Warning:</strong> This will permanently delete the book!</p>
+            <button onclick="testDeleteBook()" style="background: #d00;">Delete Book</button>
+            <div id="delete-response" class="response"></div>
+        </div>
+
+        <!-- Verify Token Test -->
+        <div class="test-section">
+            <h2>7. Verify Token</h2>
+            <button onclick="testVerifyToken()">Verify Token</button>
+            <div id="verify-response" class="response"></div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = window.location.origin + window.location.pathname.replace('api_test.html', '');
+        let authToken = localStorage.getItem('librava_token') || '';
+
+        if (authToken) {
+            document.getElementById('token-display').style.display = 'block';
+            document.getElementById('token-value').textContent = authToken;
+        }
+
+        function showResponse(elementId, data, isError = false) {
+            const el = document.getElementById(elementId);
+            el.textContent = JSON.stringify(data, null, 2);
+            el.className = 'response show ' + (isError ? 'error' : 'success');
+        }
+
+        async function testLogin() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch(BASE_URL + 'api/index.php?action=login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                showResponse('login-response', data, !data.success);
+
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    localStorage.setItem('librava_token', authToken);
+                    document.getElementById('token-display').style.display = 'block';
+                    document.getElementById('token-value').textContent = authToken;
+                }
+            } catch (error) {
+                showResponse('login-response', { error: error.message }, true);
+            }
+        }
+
+        async function testGetBooks() {
+            try {
+                const response = await fetch(BASE_URL + 'api/index.php?action=books');
+                const data = await response.json();
+                showResponse('books-response', data, !data.success);
+            } catch (error) {
+                showResponse('books-response', { error: error.message }, true);
+            }
+        }
+
+        async function testGetBook() {
+            const id = document.getElementById('get-book-id').value;
+            
+            try {
+                const response = await fetch(BASE_URL + `api/index.php?action=books&id=${id}`);
+                const data = await response.json();
+                showResponse('get-book-response', data, !data.success);
+            } catch (error) {
+                showResponse('get-book-response', { error: error.message }, true);
+            }
+        }
+
+        async function testCreateBook() {
+            if (!authToken) {
+                alert('Please login first to get an authentication token!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('title', document.getElementById('create-title').value);
+            formData.append('author', document.getElementById('create-author').value);
+            formData.append('description', document.getElementById('create-description').value);
+            formData.append('category', document.getElementById('create-category').value);
+
+            const coverFile = document.getElementById('create-cover').files[0];
+            if (coverFile) {
+                formData.append('cover', coverFile);
+            }
+
+            const pdfFile = document.getElementById('create-pdf').files[0];
+            if (pdfFile) {
+                formData.append('pdf', pdfFile);
+            }
+
+            try {
+                const response = await fetch(BASE_URL + 'api/index.php?action=books', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + authToken
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                showResponse('create-response', data, !data.success);
+            } catch (error) {
+                showResponse('create-response', { error: error.message }, true);
+            }
+        }
+
+        async function testUpdateBook() {
+            if (!authToken) {
+                alert('Please login first to get an authentication token!');
+                return;
+            }
+
+            const id = document.getElementById('update-book-id').value;
+            if (!id) {
+                alert('Please enter a book ID to update!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('title', document.getElementById('update-title').value);
+            formData.append('author', document.getElementById('update-author').value);
+            formData.append('description', document.getElementById('update-description').value);
+            formData.append('category', document.getElementById('update-category').value);
+
+            try {
+                const response = await fetch(BASE_URL + `api/index.php?action=books&id=${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + authToken
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                showResponse('update-response', data, !data.success);
+            } catch (error) {
+                showResponse('update-response', { error: error.message }, true);
+            }
+        }
+
+        async function testDeleteBook() {
+            if (!authToken) {
+                alert('Please login first to get an authentication token!');
+                return;
+            }
+
+            const id = document.getElementById('delete-book-id').value;
+            if (!id) {
+                alert('Please enter a book ID to delete!');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to DELETE book #${id}?\n\nThis action cannot be undone!`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(BASE_URL + `api/index.php?action=books&id=${id}&_method=DELETE`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + authToken
+                    }
+                });
+
+                const data = await response.json();
+                showResponse('delete-response', data, !data.success);
+            } catch (error) {
+                showResponse('delete-response', { error: error.message }, true);
+            }
+        }
+
+        async function testVerifyToken() {
+            if (!authToken) {
+                alert('Please login first to get an authentication token!');
+                return;
+            }
+
+            try {
+                const response = await fetch(BASE_URL + 'api/index.php?action=verify_token', {
+                    headers: {
+                        'Authorization': 'Bearer ' + authToken
+                    }
+                });
+
+                const data = await response.json();
+                showResponse('verify-response', data, !data.success);
+            } catch (error) {
+                showResponse('verify-response', { error: error.message }, true);
+            }
+        }
+    </script>
+</body>
+</html>
+

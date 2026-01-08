@@ -1,0 +1,86 @@
+# PHP
+*.log
+*.cache
+*.tmp
+
+# Composer
+/vendor/
+composer.lock
+composer.phar
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Uploads (keep structure, ignore content)
+uploads/*
+!uploads/.htaccess
+!uploads/index.php
+!uploads/covers/.gitkeep
+!uploads/pdfs/.gitkeep
+
+# Database
+*.sql.backup
+*.sql.gz
+dump.sql
+
+# Configuration (security)
+includes/config.php
+
+# Logs
+error.log
+access.log
+debug.log
+
+# Cache
+cache/
+temp/
+tmp/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
+
+# Node modules (if using npm for frontend)
+node_modules/
+package-lock.json
+
+# Build files
+dist/
+build/
+
+# Test files
+tests/coverage/
+phpunit.xml
+.phpunit.result.cache
+
+# Android project (separate repository)
+android/
+
+# Temporary guide files (not part of the project)
+DEPLOYMENT_GUIDE.md
+GITHUB_UPLOAD_SUMMARY.md
+HOW_TO_UPLOAD.txt
+QUICK_START.txt
+*.guide.md
+*.guide.txt
